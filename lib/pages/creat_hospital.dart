@@ -1,23 +1,22 @@
 import 'dart:math';
-import 'dart:typed_data';
 
-import 'package:ambulance/services/cache_values.dart';
-import 'package:ambulance/services/db_repository.dart';
 import 'package:flutter/material.dart';
 
-class AddCallPage extends StatefulWidget {
-  const AddCallPage({Key? key}) : super(key: key);
+import '../services/cache_values.dart';
+import '../services/db_repository.dart';
+class CreateHospital extends StatefulWidget {
+  const CreateHospital({Key? key}) : super(key: key);
 
   @override
-  State<AddCallPage> createState() => _AddCallPageState();
+  State<CreateHospital> createState() => _CreateHospitalState();
 }
 
-class _AddCallPageState extends State<AddCallPage> {
-  String? patient = CachedModels.patients[1]["name"];
-  String? doctor = CachedModels.doctors[1]["name"];
-
+class _CreateHospitalState extends State<CreateHospital> {
   @override
   Widget build(BuildContext context) {
+    String? regions = CachedModels.regions[1]["name"];
+    String? doctor = CachedModels.doctors[1]["name"];
+    String? nurse = CachedModels.nurses[1]["name"];
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add call form"),
@@ -38,7 +37,7 @@ class _AddCallPageState extends State<AddCallPage> {
                     ),
                     Container(
                       height: 50,
-                      width: 280,
+                      width: 170,
                       padding: const EdgeInsets.only(left: 15),
                       margin: const EdgeInsets.symmetric(vertical: 15),
                       alignment: Alignment.centerLeft,
@@ -70,12 +69,12 @@ class _AddCallPageState extends State<AddCallPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Patient name",
+                      "Nurse Name",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                     ),
                     Container(
                       height: 50,
-                      width: 280,
+                      width: 170,
                       padding: const EdgeInsets.only(left: 15),
                       margin: const EdgeInsets.symmetric(vertical: 15),
                       alignment: Alignment.centerLeft,
@@ -86,15 +85,52 @@ class _AddCallPageState extends State<AddCallPage> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: patient,
-                          items: CachedModels.patients.map((e) => DropdownMenuItem<String>(
+                          value: nurse,
+                          items: CachedModels.nurses.map((e) => DropdownMenuItem<String>(
                             value: e["name"],
                             child: Text(e["name"]),
                           )).toList(),
                           onChanged: (String? val) {
                             if(val != null) {
                               setState(() {
-                                patient = val;
+                                nurse = val;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Region name",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 170,
+                      padding: const EdgeInsets.only(left: 15),
+                      margin: const EdgeInsets.symmetric(vertical: 15),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(12)
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: regions,
+                          items: CachedModels.regions.map((e) => DropdownMenuItem<String>(
+                            value: e["name"],
+                            child: Text(e["name"]),
+                          )).toList(),
+                          onChanged: (String? val) {
+                            if(val != null) {
+                              setState(() {
+                                regions = val;
                               });
                             }
                           },
@@ -109,23 +145,23 @@ class _AddCallPageState extends State<AddCallPage> {
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 onPressed: () async {
-                  final byteData = ByteData(8);
-                  byteData.setInt64(0, DateTime.now().millisecondsSinceEpoch);
-                  Uint8List time = byteData.buffer.asUint8List();
-                  int patientID = CachedModels.patients.firstWhere((element) => element["name"] == patient)["patient_id"];
+                  int regionID = CachedModels.regions.firstWhere((element) => element["name"] == regions)["region_id"];
                   int doctorID = CachedModels.doctors.firstWhere((element) => element["name"] == doctor)["doctor_id"];
-                  print(patient);
-                  print(doctor);
-                  Map<String, dynamic> callForm = {
-                    "call_id": Random().nextInt(100),
-                    "doctor_id": doctorID,
-                    "patient_id": patientID,
-                    "created_at": DateTime.now().toString(),
-                    "road_id": DBRepo().getBestRoute(),
-                    "medical_id": CachedModels.medialHistories.firstWhere((element) => element["patient_id"] == patientID)["medical_id"]
+                  int nurseID = CachedModels.nurses.firstWhere((element) => element["name"] == nurse)["nurse_id"];
+                  Map<String, dynamic> hospital = {
+                    "hospital_id": Random().nextInt(100), //random(1, 100)
+                    "name": "string", //input
+                    "region_id": regionID, //drop down
+                    "location": "string", //input
+                    "opened_at": DateTime.now().toString(),
+                    "nurse_id": nurseID, //drop down
+                    "doctor_id": doctorID, //drop down
                   };
-                  bool created = await DBRepo().createCallForm(callForm);
-                  if(created) Navigator.pop(context);
+                  bool created = await DBRepo().createHospital(hospital);
+                  if(created) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text(
                     "Create"

@@ -17,14 +17,6 @@ class DBRepo {
   }
 
   Future<bool> createCallForm(Map<String, dynamic> callForm) async {
-    callForm = {
-      "call_id": 1, //random(1, 100)
-      "doctor_id": 1, //drop down
-      "patient_id": 1, //drop down
-      "created_at": DateTime.now(),
-      "road_id": getBestRoute(),
-      "medical_id": 1, //medicalHistory listdan patient id orqali firstWhere qivolasan
-    };
     bool created =  await DBService().writeDataToDB('callform', callForm);
     if(created) CachedModels.callForms = await DBService().getData('callform');
     return created;
@@ -44,15 +36,6 @@ class DBRepo {
   }
 
   Future<bool> createHospital(Map<String, dynamic> hospital) async {
-    hospital = {
-      "hospital_id": 1, //random(1, 100)
-      "name": "string", //input
-      "region_id": 1, //drop down
-      "location": "string", //input
-      "opened_at": DateTime.now(),
-      "nurse_id": 1, //drop down
-      "doctor_id": 1, //drop down
-    };
     bool created = await DBService().writeDataToDB('hospital', hospital);
     if(created) CachedModels.hospitals = await DBService().getData('hospital');
     return created;
