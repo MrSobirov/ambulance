@@ -52,7 +52,7 @@ class DBService {
     try{
       if(CachedModels.database != null) {
         try{
-          await CachedModels.database!.insert(table, body);
+          await CachedModels.database!.insert(table, body, conflictAlgorithm: ConflictAlgorithm.replace);
           getData(table);
           return true;
         } catch (error, stacktrace) {
