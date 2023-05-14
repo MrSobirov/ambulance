@@ -3,8 +3,9 @@ import 'package:ambulance/services/db_service.dart';
 
 class DBRepo {
   Future<void> getAllData() async {
+    await DBService().openAssetDatabase();
     CachedModels.patients = await DBService().getData('patient');
-    CachedModels.doctors = await DBService().getData('receipt');
+    CachedModels.doctors = await DBService().getData('doctor');
     CachedModels.nurses = await DBService().getData('nurse');
     CachedModels.hospitals = await DBService().getData('hospital');
     CachedModels.sicknesses = await DBService().getData('sickness');
@@ -24,7 +25,9 @@ class DBRepo {
       "road_id": getBestRoute(),
       "medical_id": 1, //medicalHistory listdan patient id orqali firstWhere qivolasan
     };
-    return DBService().writeDataToDB('callform', callForm);
+    bool created =  await DBService().writeDataToDB('callform', callForm);
+    if(created) CachedModels.callForms = await DBService().getData('callform');
+    return created;
   }
 
   Future<bool> createDoctor(Map<String, dynamic> doctor) async {
@@ -35,7 +38,9 @@ class DBRepo {
       "experince": 10, //input
       "patient_id": 1, //drop down
     };
-    return DBService().writeDataToDB('doctor', doctor);
+    bool created = await DBService().writeDataToDB('doctor', doctor);
+    if(created) CachedModels.doctors = await DBService().getData('doctor');
+    return created;
   }
 
   Future<bool> createHospital(Map<String, dynamic> hospital) async {
@@ -48,7 +53,9 @@ class DBRepo {
       "nurse_id": 1, //drop down
       "doctor_id": 1, //drop down
     };
-    return DBService().writeDataToDB('hospital', hospital);
+    bool created = await DBService().writeDataToDB('hospital', hospital);
+    if(created) CachedModels.hospitals = await DBService().getData('hospital');
+    return created;
   }
 
   Future<bool> createMedicalHistory(Map<String, dynamic> medicalHistory) async {
@@ -59,7 +66,9 @@ class DBRepo {
       "sickness_id": 1, //drop down
       "call_id": "1", //drop down
     };
-    return DBService().writeDataToDB('medicalhistory', medicalHistory);
+    bool created = await DBService().writeDataToDB('medicalhistory', medicalHistory);
+    if(created) CachedModels.medialHistories = await DBService().getData('medicalhistory');
+    return created;
   }
 
   Future<bool> createNurse(Map<String, dynamic> nurse) async {
@@ -70,7 +79,9 @@ class DBRepo {
       "schedule": "08:00 - 13:00", //input
       "patient_id": 1, //drop down
     };
-    return DBService().writeDataToDB('nurse', nurse);
+    bool created = await DBService().writeDataToDB('nurse', nurse);
+    if(created) CachedModels.nurses = await DBService().getData('nurse');
+    return created;
   }
 
   Future<bool> createPatient(Map<String, dynamic> patient) async {
@@ -81,21 +92,25 @@ class DBRepo {
       "sickness_id": 1, //drop down
       "age": 20, //input
     };
-    return DBService().writeDataToDB('patient', patient);
+    bool created = await DBService().writeDataToDB('patient', patient);
+    if(created) CachedModels.patients = await DBService().getData('patient');
+    return created;
   }
 
   Future<bool> createReceipt(Map<String, dynamic> receipt) async {
     receipt = {
       "receipt_id": 1, //random(1, 100)
-      "pills": "string", //input
-      "injections": "string", //input
-      "therapies": "string", //input
+      "pills": "List of pills", //input
+      "injections": "List of injections", //input
+      "therapies": "List of therapies", //input
       "patient_id": 1, //drop down
       "medical_id": 1, //firstWhere bilan call form dan ovolasan
-      "sickness_id": 1, //firstWhere bilan medicalHistory dan ovolasan medical id ni tepada yozdim olishni
-      "doctor_id": 1, //firstWhere bilan call form dan ovolasan
+      "sickness_id": 3, //firstWhere bilan medicalHistory dan ovolasan medical id ni tepada yozdim olishni
+      "doctor_id": 2, //firstWhere bilan call form dan ovolasan
     };
-    return DBService().writeDataToDB('receipts', receipt);
+    bool created = await DBService().writeDataToDB('receipts', receipt);
+    if(created) CachedModels.receipts = await DBService().getData('receipts');
+    return created;
   }
 
   Future<bool> createRegion(Map<String, dynamic> region) async {
@@ -106,7 +121,9 @@ class DBRepo {
       "patient_numbers": 0, //default 0
       "hospital_numbers": 0, //default 0
     };
-    return DBService().writeDataToDB('regions', region);
+    bool created = await DBService().writeDataToDB('regions', region);
+    if(created) CachedModels.regions = await DBService().getData('regions');
+    return created;
   }
 
   Future<bool> createRoad(Map<String, dynamic> road) async {
@@ -118,7 +135,9 @@ class DBRepo {
       "traffic": 0, //input
       "stops": 0, //input
     };
-    return DBService().writeDataToDB('roads', road);
+    bool created = await DBService().writeDataToDB('roads', road);
+    if(created) CachedModels.roads = await DBService().getData('roads');
+    return created;
   }
 
   Future<bool> createSickness(Map<String, dynamic> sickness) async {
@@ -130,7 +149,9 @@ class DBRepo {
       "symptoms": "string", //input
       "treatment": "string", //input
     };
-    return DBService().writeDataToDB('sickness', sickness);
+    bool created = await DBService().writeDataToDB('sickness', sickness);
+    if(created) CachedModels.sicknesses = await DBService().getData('sickness');
+    return created;
   }
 
   int getBestRoute() {

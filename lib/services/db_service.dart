@@ -56,7 +56,7 @@ class DBService {
           getData(table);
           return true;
         } catch (error, stacktrace) {
-          debugPrint("Add word error: $error, $stacktrace");
+          debugPrint("Write to database error: $error, $stacktrace");
           return false;
         }
       } else {
