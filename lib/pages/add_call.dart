@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:ambulance/services/cache_values.dart';
 import 'package:ambulance/services/db_repository.dart';
@@ -109,13 +108,8 @@ class _AddCallPageState extends State<AddCallPage> {
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 onPressed: () async {
-                  final byteData = ByteData(8);
-                  byteData.setInt64(0, DateTime.now().millisecondsSinceEpoch);
-                  Uint8List time = byteData.buffer.asUint8List();
                   int patientID = CachedModels.patients.firstWhere((element) => element["name"] == patient)["patient_id"];
                   int doctorID = CachedModels.doctors.firstWhere((element) => element["name"] == doctor)["doctor_id"];
-                  print(patient);
-                  print(doctor);
                   Map<String, dynamic> callForm = {
                     "call_id": Random().nextInt(100),
                     "doctor_id": doctorID,
